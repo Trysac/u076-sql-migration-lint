@@ -9,4 +9,5 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add the `sql_migration_lint` package: a PostgreSQL-aware lexer, rules SML001-SML010, `lint_sql`, `split_statements`, `LintConfig`, line-comment suppressions and a `python -m sql_migration_lint` CLI.
 - Initial project structure from the factory utility template.

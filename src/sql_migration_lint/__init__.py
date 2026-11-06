@@ -1,21 +1,27 @@
-"""Lint PostgreSQL migration files for operations that lock or rewrite tables or lose data, with line numbers, rule ids and suppressions"""
+"""Lint PostgreSQL migration files for locking, rewriting and data-losing operations."""
 
 from __future__ import annotations
 
-__all__ = ["__version__", "normalize"]
+import logging
+
+from .config import LintConfig
+from .errors import ConfigError, InputTooLargeError, MigrationLintError, SqlParseError
+from .lexer import Statement, split_statements
+from .linter import Finding, lint_sql
+
+__all__ = [
+    "ConfigError",
+    "Finding",
+    "InputTooLargeError",
+    "LintConfig",
+    "MigrationLintError",
+    "SqlParseError",
+    "Statement",
+    "__version__",
+    "lint_sql",
+    "split_statements",
+]
 
 __version__ = "0.1.0"
 
-
-def normalize(value: str) -> str:
-    """Return ``value`` trimmed and lower-cased.
-
-    Placeholder API created by the template: replace it with the utility's real behavior.
-
-    Raises:
-        ValueError: if ``value`` is empty or only whitespace.
-    """
-    cleaned = value.strip()
-    if not cleaned:
-        raise ValueError("value must not be empty")
-    return cleaned.lower()
+logging.getLogger(__name__).addHandler(logging.NullHandler())

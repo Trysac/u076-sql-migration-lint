@@ -19,6 +19,9 @@ classifiers = [
 ]
 dependencies = []
 
+[project.scripts]
+sql-migration-lint = "sql_migration_lint.__main__:main"
+
 [project.urls]
 Homepage = "https://github.com/Trysac/u076-sql-migration-lint"
 Source = "https://github.com/Trysac/u076-sql-migration-lint"
