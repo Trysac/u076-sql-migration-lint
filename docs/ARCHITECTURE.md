@@ -2,27 +2,28 @@
 
 ## Purpose
 
-`trysac-sql-migration-lint` is a small, dependency-free Python library: Lint PostgreSQL migration files for operations that lock or rewrite tables or lose data, with line numbers, rule ids and suppressions
+`trysac-sql-migration-lint` is a small, dependency-free Python library that lints PostgreSQL migration files for operations that lock or rewrite tables or lose data, reporting line numbers, rule ids and suppressions.
 
 ## Shape
 
 ```text
 caller code --> sql_migration_lint (public API in __init__.py)
                     |
-                    +-- pure functions, no I/O, no global state
+                    +-- lexer.py   (tokens, comments, statement splitting)
+                    +-- linter.py  (lint_sql, suppression directives, finding order)
+                    +-- rules.py   (rule catalogue SML001-SML010, per-statement analysis)
+                    +-- config.py  (LintConfig, JSON parsing)
+                    +-- errors.py  (typed errors with stable codes)
+                    +-- __main__.py (command line interface)
 ```
 
-- **Public API**: the names listed in `__all__` of `src/sql_migration_lint/__init__.py`. Anything else is
-  internal and may change without a major version.
-- **Errors**: invalid input raises built-in exceptions (`ValueError`, `TypeError`) with a clear
-  message; the library never prints or exits.
-- **Side effects**: none. If a feature needs I/O, isolate it in its own module behind a small
-  interface and record the choice in an ADR.
+- **Public API**: the five names in `__all__` of `src/sql_migration_lint/__init__.py` (`ConfigError`, `Finding`, `InputTooLargeError`, `LintConfig`, `MigrationLintError`, `SqlParseError`, `Statement`, `lint_sql`, `split_statements`, `__version__`).
+- **Errors**: invalid input raises typed subclasses of `MigrationLintError`, each with a `code`.
+- **Side effects**: the library itself performs no I/O. The CLI in `__main__.py` reads files or stdin and writes to stdout and stderr. Logging uses a `NullHandler` only.
 
 ## Quality contract
 
-`scripts/check.py` is the single definition of the gates; `fabrica.json` tells the factory and CI
-how to run it. See [TESTING.md](TESTING.md).
+`scripts/check.py` is the single definition of the gates; `fabrica.json` tells the factory and CI how to run it. See [TESTING.md](TESTING.md).
 
 ## Decisions
 
